@@ -1,0 +1,107 @@
+WIRESHARK
+*********
+Sirve para capturar y visualizar los paquetes de red.
+sudo wireshark
+Se selecciona el controlador de la tarjeta de red (enp0s3)
+Averiguar IP de la web haciendo ping (ping [WEB])
+ip.addr == [IP] <-- Filtrar por dirección IP
+http.request.method == "POST" <-- Buscar por POST (Texto plano) (name/comment/submit)
+ip.addr == 44.228.249.3 && frame contains "usuario" <-- Filtrar por IP + "usuario"
+
+HTTPS --> TLSv1.2/1.3
+
+Protocolo ICMP = Ping request / reply
+
+TCPDUMP
+*******
+Sirve para hacer capturas de paquetes en red.
+
+sudo tcpdump -i enp0s3 port 80 -w http_trafico.pcap
+
+-i <-- Especificar interfaz
+port 80 <-- Puerto 80
+-w http_trafico.pcap <-- Archivo de salida
+
+sudo tcpdump -A -r http_trafico.pcap | grep uname <-- Para que nos busque "uname" dentro del archivo de captura
+-A <-- Mostrar parquetes en formato ASCII
+-r <-- leer el tráfico capturado
+
+sudo tcpdump -i enp0s3 icmp -w icmp_traficc.pcap
+-i <-- Interfaz
+-w icmp_traficc.pcap <-- Archivo de captura
+
+sudo tcpdump -r icmp_traffic.pcap <-- Para mostrar el contenido de la captura
+
+En Wireshark se pueden abrir estos archivos de captura para analizarlos.
+tcp contains “uname” <-- En Wireshark para buscar el usuario y contraseña del archivo http_trafico.pcap
+
+
+CUENTAS DE USUARIO
+******************
+
+- <-- Archivos
+d <-- Directorio
+
+adduser <-- Crear usuario
+groupadd <-- Crear grupo
+usermod -aG <-- Añadir usuario a grupo específico (sudo usermod -aG grupo1 pepe)
+
+chmod <-- Cambiar permisos archivo
+chown <-- Cambiar propietario archivo
+chgrp <-- Cambia grupo del archivo
+
+4 - 2 - 1
+Lectura - Escritura - Ejecución
+
+LYNIS
+*****
+Sirve para hacer auditorías de seguridad.
+
+sudo lynis audit system | tee informe_lynis.txt <-- Exportar informe a TXT
+fail2ban <-- Programa que limita los intentos de autenticación para evitar ataques por fuerza bruta.
+sudo systemctl status fail2ban <-- Verificar que está instalado
+
+sudo cat informe_lynix.txt | grep /etc/issue <-- Para comprobar si está instalado el banner
+sudo nano /etc/issue <-- Para generar el banner
+
+ufw status <-- Estado del cortafuegos
+ufw enable <-- Habilitar cortafuegos
+
+NMAP
+****
+Sirve para buscar puertos y servicios abiertos, además de indicar las versiones.
+
+nmap -sn [IP] <-- Ver los hosts activos
+nmap -sS [IP] <-- Hacer un escaneo de todos los puertos TCP abiertos
+nmap -sV [IP] <-- Hacer escaneo de todos los puertos y además mostrar información sobre las versiones
+nmap -O [IP] <-- Detectar la versión del Sistema Operativo
+nmap -sC [IP] <-- Muestra los nombres de los servicios
+
+sudo nmap -sV -sC -p 21 [IP] <-- Escanear el puerto 21 (FTP) y nos mostrará toda la información sobre dicho puerto y el servicio abierto.
+sudo nmap -sV -sC -p 445 [IP] <-- Lo mismo que FTP pero con SAMBA
+
+METASPOLIT
+**********
+Sirve para hacer ataques y usar payloads
+
+sudo msfconsole (En el host)<-- Activa la consola de Metasploit en Kali Linux
+search [servicio a buscar]. <-- Por ejemplo search vsftpd y nos saldrán listados los exploits disponibles
+
+info [#]
+use [#]
+use [directorio que se indique]
+
+options <-- Mostrar las opciones de dicho exploits
+
+show payloads <-- Nos mostrará los payloads disponibles para seleccionar
+set payload [#] <-- Seleccionamos el que nos interesa
+
+Normalmente pedirá RHOST (IP de la víctima) y LHOST (IP del atacante)
+
+Para ello usamos set RHOST [IP víctima] y set LHOST [IP atacante]
+exploit <-- Lanzar el exploit (o run)
+
+Si ha funcionado nos conectará con la máquina de la víctima con acceso root, para facilitar la navegación usamos script /dev/null -c bash para
+que nos salga el prompt.
+
+
